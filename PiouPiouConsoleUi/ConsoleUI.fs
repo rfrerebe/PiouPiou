@@ -110,7 +110,7 @@
         |> List.iter afficheStatutPublic
 
 
-    let compute idp (pas :ProchaineAction list) =
+    let compute idp (pas :ProchaineAction list) c =
         let action = pas.Head.action
         let capability = pas.Head.commande ()
         action, ContinueDeJouer (capability)
@@ -155,9 +155,9 @@
                 pas |> afficheLesProchainsActions
                 let result = processInput pas
                 gameLoop api result
-            | TourDesAutres (idp, pas) ->                
+            | TourDesAutres (idp, pas, c) ->                
                 idp |> afficheStatuts
-                let action, result = compute idp pas
+                let action, result = compute idp pas c
                 let (NomDeJoueur nom) = idp.Head.joueur
                 printfn "%A joue %A" nom action 
                 joueurSuivant ()

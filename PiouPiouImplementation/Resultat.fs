@@ -14,8 +14,9 @@ module internal Resultat =
         MonTour (idp, pas, c)
 
     let creeResultatAi f edj pas  = 
-        let idp = edj |> informationDuPlateau 
-        TourDesAutres (idp, pas)
+        let idp = edj |> informationDuPlateau
+        let c = edj |> cartesAMontrer
+        TourDesAutres (idp, pas, c)
 
     let faitLesActionsSuivantes f edj action =
         let edj' = fun () -> copieAleatoire edj
