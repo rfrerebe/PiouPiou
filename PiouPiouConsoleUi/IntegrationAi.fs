@@ -12,6 +12,18 @@ module IntegrationAi =
     let random =
         new Random( DateTime.Today.Millisecond )
 
+    let ToString =
+        function
+        | VaPondreUnOeuf -> "Pond un oeuf"
+        | VaFaireEcloreUnOeuf -> "Fait eclore un oeuf"
+        | TenteUnVolDOeuf ((NomDeJoueur nom)) -> "Tente de voler un oeuf à " + nom
+        | VaDefausser (carte) -> 
+            match carte with
+            | Nid -> "Defausse un Nid"
+            | Renard -> "Defausse un Renard"
+            | Poule -> "Defausse une Poule"
+            | Coq -> "Defausse un Coq"
+
     type Player (nom : NomDeJoueur) =
         interface IPlayer with 
             member this.Name =
@@ -26,19 +38,24 @@ module IntegrationAi =
                 | None -> GameState(pa.commande ()) :> IGameState
                 | Some (commande) -> GameState(commande ()) :>IGameState
             member this.Name =
-                pa.action.ToString()
+                ToString pa.action
+
+
 
     and GameState (r : Resultat ) =
         let nom, idp, pas, c =
             match r with
-            | MonTour _ -> invalidOp "l'ordinateur de ne doit pas jouer pour moi"
+            | MonTour  (idp, pas, c) -> (NomDeJoueur "Alfred"), idp, pas, c //invalidOp "l'ordinateur de ne doit pas jouer pour moi"
             | JeuGagné _ -> invalidOp "l'ordinateur ne peut pas gercher une solution quand le jeu est gagné"
             | TourDesAutres (nom, idp, pas, c) -> nom, idp, pas, c 
 
         
         interface IGameState with
             member this.GetMoves() =
-                mkEnum<IMove> pas
+                let moves =
+                    pas
+                    |> List.map (fun pa -> Move(pa))
+                mkEnum<IMove> moves
 
             member this.CurrentPlayer() =
                 Player(nom) :> IPlayer

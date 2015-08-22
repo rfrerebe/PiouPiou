@@ -15,8 +15,7 @@ module PiouPiouConsoleUI =
     /// Afficge chaque action dansèla console
     let afficheLesProchainsActions pas = 
         pas 
-        |> List.iteri (fun i pa -> 
-            printfn "%i) %A" i pa.action)
+        |> List.iteri (fun i pa -> printfn "%i) %A" i pa.action)
 
     /// Get the move corresponding to the 
     /// index selected by the user
@@ -116,30 +115,32 @@ module PiouPiouConsoleUI =
         let getMove name =
             let result =
                 pas
-                |> List.tryFind (fun pa -> name = pa.action.ToString())
+                |> List.tryFind (fun pa -> name.Equals(ToString pa.action))
             match result with
             | None -> 
                 let actionList = 
                     pas
-                    |> List.map (fun pa -> pa.action.ToString())
-                invalidOp "Cherche a executer l'action {0}, absente dan la liste d'a&ction {1}" name actionList
+                    |> List.map (fun pa -> ToString pa.action)
+                invalidOp "Cherche a executer l'action {0}, absente dan la liste d'action {1}" name actionList
             | Some (pa) -> pa
 
         let r = TourDesAutres(nom, idp, pas, c)
+        let print = 
+            new Action<string>(fun arg -> printfn "%s" arg)
         match nom with
         | NomDeJoueur "Suzanne" ->
             let gs  = GameState(r)
-            let move  = UCT.ComputeUCT(gs,10, true)
+            let move  = UCT.ComputeUCT(gs,10, true, print)
             let pa  = getMove move.Name
             pa
         | NomDeJoueur "Joseph" ->
             let gs  = GameState(r)
-            let move  = UCT.ComputeUCT(gs,20, true)
+            let move  = UCT.ComputeUCT(gs,200, false, print)
             let pa  = getMove move.Name
             pa
         | NomDeJoueur "Jeanne" -> 
             let gs  = GameState(r)
-            let move  = UCT.ComputeUCT(gs,50, true)
+            let move  = UCT.ComputeUCT(gs,500, false, print)
             let pa  = getMove move.Name
             pa
         | _ -> invalidOp "nom de joueur invalid"
