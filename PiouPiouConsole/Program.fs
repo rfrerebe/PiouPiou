@@ -4,7 +4,7 @@
     let startGame() =
         let api = PiouPiouImplementation.Api.api
         //let loggedApi = Logger.injectLogging api
-        PiouPiouConsoleUI.startGame api 
+        GameWithAi.PiouPiouConsoleUI.startGame api 
 
 (*
 

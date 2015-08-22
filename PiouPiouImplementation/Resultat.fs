@@ -16,7 +16,8 @@ module internal Resultat =
     let creeResultatAi f edj pas  = 
         let idp = edj |> informationDuPlateau
         let c = edj |> cartesAMontrer
-        TourDesAutres (idp, pas, c)
+        let joueur = edj.joueurs.Head.nom
+        TourDesAutres (joueur, idp, pas, c)
 
     let faitLesActionsSuivantes f edj action =
         let edj' = fun () -> copieAleatoire edj

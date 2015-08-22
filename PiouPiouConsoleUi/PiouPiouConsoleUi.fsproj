@@ -40,7 +40,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="MCTS">
-      <HintPath>..\packages\lib\net46\MCTS.dll</HintPath>
+      <HintPath>..\packages\MCTS.1.0.0.0\lib\net46\MCTS.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="FSharp.Core, Version=$(TargetFSharpCoreVersion), Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">

@@ -75,7 +75,7 @@
         // C'est mon tour. Je vois l'information du plateau, mes cartes et ma liste d'action
         | MonTour of InformationDuPlateau * ProchaineAction list * Carte list
         // C'est le tour des autres. Je vois l'information du plateau, mes cartes et l'actioè du joueur
-        | TourDesAutres of InformationDuPlateau * ProchaineAction list * Carte list
+        | TourDesAutres of NomDeJoueur * InformationDuPlateau * ProchaineAction list * Carte list
         //| Tour of InformationDuPlateau * Carte list * ProchaineAction list
         // Le jeu est gagne par un Joueur
         | JeuGagné of InformationDuPlateau * NomDeJoueur 

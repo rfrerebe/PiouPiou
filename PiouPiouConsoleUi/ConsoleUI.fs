@@ -1,12 +1,14 @@
-﻿module PiouPiouConsoleUI
+﻿namespace GameWithAi
+
+module PiouPiouConsoleUI =
     
     open System
-
+    open IntegrationAi
     open PiouPiouDomain
-
+    open MCTS
         
     /// Suit l'etat de l'UI
-    type ActionDuJpueur<'a> =
+    type ActionDuJoueur<'a> =
         | ContinueDeJouer of 'a
         | QuitteLeJeu
 
@@ -110,10 +112,41 @@
         |> List.iter afficheStatutPublic
 
 
-    let compute idp (pas :ProchaineAction list) c =
-        let action = pas.Head.action
-        let capability = pas.Head.commande ()
-        action, ContinueDeJouer (capability)
+    let compute nom idp (pas :ProchaineAction list) c =
+        let getMove name =
+            let result =
+                pas
+                |> List.tryFind (fun pa -> name = pa.action.ToString())
+            match result with
+            | None -> 
+                let actionList = 
+                    pas
+                    |> List.map (fun pa -> pa.action.ToString())
+                invalidOp "Cherche a executer l'action {0}, absente dan la liste d'a&ction {1}" name actionList
+            | Some (pa) -> pa
+
+        let r = TourDesAutres(nom, idp, pas, c)
+        match nom with
+        | NomDeJoueur "Suzanne" ->
+            let gs  = GameState(r)
+            let move  = UCT.ComputeUCT(gs,10, true)
+            let pa  = getMove move.Name
+            pa
+        | NomDeJoueur "Joseph" ->
+            let gs  = GameState(r)
+            let move  = UCT.ComputeUCT(gs,20, true)
+            let pa  = getMove move.Name
+            pa
+        | NomDeJoueur "Jeanne" -> 
+            let gs  = GameState(r)
+            let move  = UCT.ComputeUCT(gs,50, true)
+            let pa  = getMove move.Name
+            pa
+        | _ -> invalidOp "nom de joueur invalid"
+// Dummy AI, pick always first choice (it's often the best ...)         
+//        let action = pas.Head.action
+//        let capability = pas.Head.commande ()
+//        action, ContinueDeJouer (capability)
 
     let joueurSuivant ()=
         printfn "Appuyer sur une touche pour passer au joueur suivant"
@@ -155,12 +188,15 @@
                 pas |> afficheLesProchainsActions
                 let result = processInput pas
                 gameLoop api result
-            | TourDesAutres (idp, pas, c) ->                
+            | TourDesAutres (nom, idp, pas, c) ->                
                 idp |> afficheStatuts
-                let action, result = compute idp pas c
+                c |> afficheCartes
+                pas |> afficheLesProchainsActions
+                let prochaineAction = compute nom idp pas c 
                 let (NomDeJoueur nom) = idp.Head.joueur
-                printfn "%A joue %A" nom action 
+                printfn "%A joue %A" nom prochaineAction.action
                 joueurSuivant ()
+                let result = ContinueDeJouer (prochaineAction.commande())
                 gameLoop api result
                 
 
