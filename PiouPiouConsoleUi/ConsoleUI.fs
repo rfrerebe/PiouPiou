@@ -130,17 +130,17 @@ module PiouPiouConsoleUI =
         match nom with
         | NomDeJoueur "Suzanne" ->
             let gs  = GameState(r)
-            let move  = UCT.ComputeUCT(gs,10, true, print)
+            let move  = UCT.ComputeUCT(gs,9503, false, print, 1E-16F)
             let pa  = getMove move.Name
             pa
         | NomDeJoueur "Joseph" ->
             let gs  = GameState(r)
-            let move  = UCT.ComputeUCT(gs,200, false, print)
+            let move  = UCT.ComputeUCT(gs,9503, false, print,1E-12F)
             let pa  = getMove move.Name
             pa
         | NomDeJoueur "Jeanne" -> 
             let gs  = GameState(r)
-            let move  = UCT.ComputeUCT(gs,500, false, print)
+            let move  = UCT.ComputeUCT(gs,9503, false, print, 1E-6F)
             let pa  = getMove move.Name
             pa
         | _ -> invalidOp "nom de joueur invalid"

@@ -46,7 +46,7 @@ module IntegrationAi =
         let nom, idp, pas, c =
             match r with
             | MonTour  (idp, pas, c) -> (NomDeJoueur "Alfred"), idp, pas, c //invalidOp "l'ordinateur de ne doit pas jouer pour moi"
-            | JeuGagné _ -> invalidOp "l'ordinateur ne peut pas gercher une solution quand le jeu est gagné"
+            | JeuGagné (idp, nom) -> nom, idp, List.empty<ProchaineAction>, List.empty<Carte> //invalidOp "l'ordinateur ne peut pas gercher une solution quand le jeu est gagné"
             | TourDesAutres (nom, idp, pas, c) -> nom, idp, pas, c 
 
         
@@ -62,19 +62,24 @@ module IntegrationAi =
 
             member this.PlayRandomlyUntilTheEnd( player ) =
                 let rec play =
-                    let play' pas =
-                        let r = 
+                    let play' nom (idp : InformationDuPlateau) pas c =
+                        let eclos =
                             pas
-                            |> List.length
-                            |> random.Next 
-                        let pa = 
-                            pas
-                            |> List.item r
-                        pa.commande ()
-                        |> play
+                            |> List.tryFind (fun pa -> pa.action.Equals(VaFaireEcloreUnOeuf))
+
+                        match eclos with
+                        | Some(pa) -> 
+                            pa.commande ()
+                            |> play
+                        | None ->
+                            let pa =
+                                pas
+                                |> List.head
+                            pa.commande ()
+                            |> play                              
                     function
-                    | MonTour (_ ,pas, _) -> play' pas 
-                    | TourDesAutres (_,_,pas,_) -> play' pas
+                    | MonTour (idp ,pas, c) -> play' ((NomDeJoueur) "Alfred") idp pas c 
+                    | TourDesAutres (nom, idp ,pas, c) -> play' nom idp pas c
                     | JeuGagné (_ , (NomDeJoueur nom)) -> 
                         if  nom = player.Name then
                             MCTS.Enum.EGameFinalStatus.GameWon
